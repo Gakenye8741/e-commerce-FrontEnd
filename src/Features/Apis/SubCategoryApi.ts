@@ -12,7 +12,7 @@ export interface Subcategory {
 export const subcategoryApi = createApi({
   reducerPath: "subcategoryApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/",
+    baseUrl: "https://e-commerce-backend-esgr.onrender.com/api",
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {
