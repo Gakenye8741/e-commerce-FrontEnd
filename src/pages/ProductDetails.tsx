@@ -165,7 +165,7 @@ export default function ProductDetails() {
           </div>
         </div>
 
-        {/* Similar Products by Category */}
+        {/* Similar Products */}
         {similarProducts.length > 0 && (
           <div className="mt-12">
             <h2 className="text-2xl font-bold mb-4">🛍️ Similar Products in Category: {product.category}</h2>
@@ -173,19 +173,26 @@ export default function ProductDetails() {
               {similarProducts.map((p) => {
                 const img = images.find((i) => i.productId === p.productId)?.url || "/placeholder.jpg";
                 return (
-                  <Link
-                    to={`/products/${p.productId}`}
+                  <div
                     key={p.productId}
-                    className="bg-white/10 rounded-xl overflow-hidden shadow hover:shadow-lg transition hover:scale-[1.02]"
+                    className="bg-white/10 rounded-xl overflow-hidden shadow hover:shadow-lg transition hover:scale-[1.02] flex flex-col"
                   >
                     <img src={img} alt={p.title} className="w-full h-48 object-cover" />
-                    <div className="p-4">
+                    <div className="p-4 flex-grow">
                       <h3 className="text-lg font-semibold truncate">{p.title}</h3>
                       <p className="text-blue-300 font-bold">
                         Ksh {parseFloat(p.price).toFixed(2)}
                       </p>
                     </div>
-                  </Link>
+                    <div className="px-4 pb-4">
+                      <Link
+                        to={`/products/${p.productId}`}
+                        className="inline-block text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg text-center w-full"
+                      >
+                        View More
+                      </Link>
+                    </div>
+                  </div>
                 );
               })}
             </div>
@@ -202,19 +209,26 @@ export default function ProductDetails() {
               .map((p) => {
                 const img = images.find((i) => i.productId === p.productId)?.url || "/placeholder.jpg";
                 return (
-                  <Link
-                    to={`/products/${p.productId}`}
+                  <div
                     key={p.productId}
-                    className="bg-white/10 rounded-xl overflow-hidden shadow hover:shadow-lg transition hover:scale-[1.02]"
+                    className="bg-white/10 rounded-xl overflow-hidden shadow hover:shadow-lg transition hover:scale-[1.02] flex flex-col"
                   >
                     <img src={img} alt={p.title} className="w-full h-48 object-cover" />
-                    <div className="p-4">
+                    <div className="p-4 flex-grow">
                       <h3 className="text-lg font-semibold truncate">{p.title}</h3>
                       <p className="text-blue-300 font-bold">
                         Ksh {parseFloat(p.price).toFixed(2)}
                       </p>
                     </div>
-                  </Link>
+                    <div className="px-4 pb-4">
+                      <Link
+                        to={`/products/${p.productId}`}
+                        className="inline-block text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg text-center w-full"
+                      >
+                        View More
+                      </Link>
+                    </div>
+                  </div>
                 );
               })}
           </div>
