@@ -61,7 +61,7 @@ export default function NewArrivals() {
     images.find((img) => img.productId === productId)?.url || "/placeholder.jpg";
 
   return (
-    <section className="p-6 md:p-10 bg-white rounded-2xl shadow-md">
+    <section className="p-6 md:p-10 bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#0f172a]  rounded-2xl shadow-md mb-20">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">🆕 New Arrivals</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {latestProducts.map((product) => (
