@@ -12,6 +12,7 @@ import ProtectedRoutes from './components/ProtectedRoutes';
 import ManageCategories from './Dashboards/AdminDashboard/manageCategories';
 import ManageSubcategories from './Dashboards/AdminDashboard/SubCategories';
 import ManageProducts from './Dashboards/AdminDashboard/ManageProducts';
+import ManageMedia from './Dashboards/AdminDashboard/ManageMedia';
 
 function App() {
   
@@ -51,7 +52,8 @@ function App() {
       children: [
         { path: 'ManageCategories', element: <ManageCategories /> },
         { path: 'ManageSubCategories', element: <ManageSubcategories/> },
-        { path: 'ManageProducts', element: <ManageProducts/> }
+        { path: 'ManageProducts', element: <ManageProducts/> },
+        { path: 'ManageImages', element: <ManageMedia /> },
     
         
       ],

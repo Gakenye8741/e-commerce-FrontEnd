@@ -20,6 +20,11 @@ const navItems = [
     path: "ManageProducts",
     icon: <FaProductHunt className="w-5 h-5" />,
   },
+  {
+    name: "Manage Images",
+    path: "ManageImages",
+    icon: <FaProductHunt className="w-5 h-5" />,
+  },
 ];
 
 export const AdminSideNav = ({ onNavItemClick }: { onNavItemClick?: () => void }) => {
