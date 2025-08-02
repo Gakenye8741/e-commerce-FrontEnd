@@ -5,6 +5,7 @@ import { useGetAllImagesQuery } from "../Features/Apis/MediaApi";
 import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import { Carousel } from "react-responsive-carousel";
+import { motion } from "framer-motion";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 interface Product {
@@ -26,12 +27,6 @@ interface Image {
 export default function ProductDetails() {
   const { productId } = useParams<{ productId: string }>();
   const location = useLocation();
-
-  // Scroll to top on route change
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
-
   const parsedId = parseInt(productId || "0", 10);
 
   const { data: productData, isLoading: loadingProducts } = useGetAllProductsQuery({});
@@ -39,6 +34,10 @@ export default function ProductDetails() {
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location.pathname]);
 
   const products: Product[] = Array.isArray(productData)
     ? productData
@@ -57,10 +56,12 @@ export default function ProductDetails() {
 
   const today = new Date();
   const minDelivery = new Date(today);
-  minDelivery.setDate(today.getDate() + 2);
   const maxDelivery = new Date(today);
+  minDelivery.setDate(today.getDate() + 2);
   maxDelivery.setDate(today.getDate() + 5);
   const deliveryRange = `${minDelivery.toDateString()} - ${maxDelivery.toDateString()}`;
+
+  const getRandomRating = () => (Math.random() * 0.6 + 4).toFixed(1);
 
   if (loadingProducts || loadingImages) {
     return (
@@ -81,7 +82,12 @@ export default function ProductDetails() {
   return (
     <>
       <Navbar />
-      <div className="max-w-5xl mx-auto px-6 py-10 mt-20 rounded-2xl shadow-lg bg-gradient-to-r from-[#1F2937] via-[#3B82F6] to-[#1F2937] backdrop-blur-md text-white animate-fade-in">
+      <motion.div
+        className="max-w-5xl mx-auto px-6 py-10 mt-20 rounded-2xl shadow-lg bg-gradient-to-r from-[#1F2937] via-[#3B82F6] to-[#1F2937] backdrop-blur-md text-white"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
         <div className="grid md:grid-cols-2 gap-8">
           {/* Product Images */}
           <div className="space-y-4">
@@ -120,6 +126,9 @@ export default function ProductDetails() {
             <p className="text-2xl text-blue-300 font-semibold">
               Ksh {parseFloat(product.price).toFixed(2)}
             </p>
+
+            {/* Ratings */}
+            <p className="text-yellow-300">⭐ {getRandomRating()} / 5.0</p>
 
             {/* Quantity Selector */}
             <div>
@@ -180,9 +189,10 @@ export default function ProductDetails() {
               {similarProducts.map((p) => {
                 const img = images.find((i) => i.productId === p.productId)?.url || "/placeholder.jpg";
                 return (
-                  <div
+                  <motion.div
                     key={p.productId}
                     className="bg-white/10 rounded-xl overflow-hidden shadow hover:shadow-lg transition hover:scale-[1.02] flex flex-col"
+                    whileHover={{ scale: 1.03 }}
                   >
                     <img src={img} alt={p.title} className="w-full h-48 object-cover" />
                     <div className="p-4 flex-grow">
@@ -190,6 +200,7 @@ export default function ProductDetails() {
                       <p className="text-blue-300 font-bold">
                         Ksh {parseFloat(p.price).toFixed(2)}
                       </p>
+                      <p className="text-yellow-300">⭐ {getRandomRating()} / 5.0</p>
                     </div>
                     <div className="px-4 pb-4">
                       <Link
@@ -199,7 +210,7 @@ export default function ProductDetails() {
                         View More
                       </Link>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -216,9 +227,10 @@ export default function ProductDetails() {
               .map((p) => {
                 const img = images.find((i) => i.productId === p.productId)?.url || "/placeholder.jpg";
                 return (
-                  <div
+                  <motion.div
                     key={p.productId}
                     className="bg-white/10 rounded-xl overflow-hidden shadow hover:shadow-lg transition hover:scale-[1.02] flex flex-col"
+                    whileHover={{ scale: 1.03 }}
                   >
                     <img src={img} alt={p.title} className="w-full h-48 object-cover" />
                     <div className="p-4 flex-grow">
@@ -226,6 +238,7 @@ export default function ProductDetails() {
                       <p className="text-blue-300 font-bold">
                         Ksh {parseFloat(p.price).toFixed(2)}
                       </p>
+                      <p className="text-yellow-300">⭐ {getRandomRating()} / 5.0</p>
                     </div>
                     <div className="px-4 pb-4">
                       <Link
@@ -235,7 +248,7 @@ export default function ProductDetails() {
                         View More
                       </Link>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
           </div>
@@ -244,13 +257,13 @@ export default function ProductDetails() {
         {/* Zoom Modal */}
         {selectedImage && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 animate-fade-in"
+            className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50"
             onClick={() => setSelectedImage(null)}
           >
             <img src={selectedImage} alt="Zoomed" className="max-h-[90%] max-w-[90%] rounded-lg" />
           </div>
         )}
-      </div>
+      </motion.div>
     </>
   );
 }
