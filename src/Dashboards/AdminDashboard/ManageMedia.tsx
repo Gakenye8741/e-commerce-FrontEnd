@@ -23,9 +23,16 @@ interface Product {
 }
 
 const ManageImages: React.FC = () => {
-  const { data: images = [], isLoading, isError } = useGetAllImagesQuery({});
+  const {
+    data: imageResponse,
+    isLoading,
+    isError,
+  } = useGetAllImagesQuery({});
 
-  // ✅ Updated: Robust product extraction from API
+  const images: Image[] = Array.isArray(imageResponse)
+    ? imageResponse
+    : imageResponse?.allImages || imageResponse?.data || [];
+
   const { data: productResponse = {} } = useGetAllProductsQuery({});
   const products: Product[] = Array.isArray(productResponse)
     ? productResponse
@@ -111,7 +118,6 @@ const ManageImages: React.FC = () => {
     }
   };
 
-  // ✅ Shows product title properly now
   const getProductTitle = (id: number) =>
     products.find((p: Product) => p.productId === id)?.title || `Product ${id}`;
 

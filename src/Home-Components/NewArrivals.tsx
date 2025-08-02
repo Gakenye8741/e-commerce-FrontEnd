@@ -2,15 +2,40 @@ import PuffLoader from "react-spinners/PuffLoader";
 import { useGetAllProductsQuery } from "../Features/Apis/ProductApi";
 import { useGetAllImagesQuery } from "../Features/Apis/MediaApi";
 
+interface Product {
+  productId: number;
+  title: string;
+  price: string;
+}
+
+interface Image {
+  imageId: number;
+  productId: number;
+  url: string;
+  alt?: string;
+}
+
 export default function NewArrivals() {
-  const { data: productData, isLoading: loadingProducts, isError: errorProducts } = useGetAllProductsQuery({});
-  const { data: imageData, isLoading: loadingImages, isError: errorImages } = useGetAllImagesQuery({});
+  const {
+    data: productData,
+    isLoading: loadingProducts,
+    isError: errorProducts,
+  } = useGetAllProductsQuery({});
 
-  console.log("Product API data:", productData);
-  console.log("Image API data:", imageData);
+  const {
+    data: imageData,
+    isLoading: loadingImages,
+    isError: errorImages,
+  } = useGetAllImagesQuery({});
 
-  const products = Array.isArray(productData?.allProducts) ? productData.allProducts : [];
-  const images = Array.isArray(imageData) ? imageData : [];
+  // Safe extraction
+  const products: Product[] = Array.isArray(productData)
+    ? productData
+    : productData?.allProducts || productData?.data || [];
+
+  const images: Image[] = Array.isArray(imageData)
+    ? imageData
+    : imageData?.allImages || imageData?.data || [];
 
   if (loadingProducts || loadingImages) {
     return (
@@ -28,17 +53,16 @@ export default function NewArrivals() {
     );
   }
 
-  // Optional: sort if you later use createdAt
   const latestProducts = products.slice(0, 4);
 
-  const getImageForProduct = (productId: number) =>
+  const getImageForProduct = (productId: number): string =>
     images.find((img) => img.productId === productId)?.url || "/placeholder.jpg";
 
   return (
     <section className="p-6 md:p-10 bg-white rounded-2xl shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">🆕 New Arrivals</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {latestProducts.map((product: any) => (
+        {latestProducts.map((product) => (
           <div
             key={product.productId}
             className="rounded-xl overflow-hidden bg-gray-50 shadow hover:shadow-lg transition-all"
