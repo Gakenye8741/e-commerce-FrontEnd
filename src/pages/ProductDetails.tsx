@@ -1,9 +1,9 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import PuffLoader from "react-spinners/PuffLoader";
 import { useGetAllProductsQuery } from "../Features/Apis/ProductApi";
 import { useGetAllImagesQuery } from "../Features/Apis/MediaApi";
 import Navbar from "../components/Navbar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
@@ -25,6 +25,13 @@ interface Image {
 
 export default function ProductDetails() {
   const { productId } = useParams<{ productId: string }>();
+  const location = useLocation();
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   const parsedId = parseInt(productId || "0", 10);
 
   const { data: productData, isLoading: loadingProducts } = useGetAllProductsQuery({});
