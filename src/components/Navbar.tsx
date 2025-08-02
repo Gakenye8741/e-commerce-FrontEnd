@@ -20,7 +20,6 @@ import type { RootState } from "../App/store";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const toggleMenu = () => setIsOpen(!isOpen);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
