@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import PuffLoader from "react-spinners/PuffLoader";
 import { useGetAllProductsQuery } from "../Features/Apis/ProductApi";
 import { useGetAllImagesQuery } from "../Features/Apis/MediaApi";
@@ -16,6 +17,8 @@ interface Image {
 }
 
 export default function NewArrivals() {
+  const navigate = useNavigate(); // <-- React Router hook for navigation
+
   const {
     data: productData,
     isLoading: loadingProducts,
@@ -28,7 +31,6 @@ export default function NewArrivals() {
     isError: errorImages,
   } = useGetAllImagesQuery({});
 
-  // Safe extraction
   const products: Product[] = Array.isArray(productData)
     ? productData
     : productData?.allProducts || productData?.data || [];
@@ -72,13 +74,19 @@ export default function NewArrivals() {
               alt={product.title || "Product"}
               className="w-full h-48 object-cover"
             />
-            <div className="p-4">
+            <div className="p-4 space-y-2">
               <h3 className="text-lg font-semibold text-gray-700 truncate">
                 {product.title}
               </h3>
               <p className="text-blue-600 font-bold">
-                ${parseFloat(product.price).toFixed(2)}
+                Ksh{parseFloat(product.price).toFixed(2)}
               </p>
+              <button
+                onClick={() => navigate(`/products/${product.productId}`)}
+                className="btn btn-sm btn-outline btn-primary w-full mt-2"
+              >
+                View Details
+              </button>
             </div>
           </div>
         ))}

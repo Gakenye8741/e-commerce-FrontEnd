@@ -1,4 +1,5 @@
 
+
 import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from './pages/Home';
@@ -13,6 +14,7 @@ import ManageCategories from './Dashboards/AdminDashboard/manageCategories';
 import ManageSubcategories from './Dashboards/AdminDashboard/SubCategories';
 import ManageProducts from './Dashboards/AdminDashboard/ManageProducts';
 import ManageMedia from './Dashboards/AdminDashboard/ManageMedia';
+import ProductDetails from './pages/ProductDetails';
 
 function App() {
   
@@ -40,6 +42,10 @@ function App() {
     ,{
       path: "/About",
       element: <About/>
+    }
+    ,{
+      path: "/products/:productId",
+      element: <ProductDetails/>
     },
     {
       path: 'admindashboard',

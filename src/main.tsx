@@ -6,6 +6,7 @@ import { Provider } from 'react-redux'
 import { store,persister } from '../src/App/store.ts'
 import { PersistGate } from 'redux-persist/integration/react'
 
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
