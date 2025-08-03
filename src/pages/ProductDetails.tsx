@@ -6,7 +6,10 @@ import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import { Carousel } from "react-responsive-carousel";
 import { motion } from "framer-motion";
+import { toast } from "react-hot-toast";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { addToCart } from "../utils/CartStorage";
+
 
 interface Product {
   productId: number;
@@ -141,9 +144,29 @@ export default function ProductDetails() {
               </div>
             </div>
 
-            <button className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => {
+                try {
+                  addToCart({
+                    productId: product.productId,
+                    title: product.title,
+                    price: product.price ?? 0,
+                    quantity,
+                    image: productImages[0]?.url || "/placeholder.jpg",
+                  });
+                  toast.success("✅ Added to cart!");
+                } catch (err) {
+                  console.error("Error adding to cart:", err);
+                  toast.error("❌ Failed to add to cart.");
+                }
+              }}
+              className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition"
+            >
               Add to Cart
-            </button>
+            </motion.button>
 
             <div>
               <h3 className="text-xl font-semibold mb-1">Description</h3>

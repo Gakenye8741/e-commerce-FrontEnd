@@ -17,6 +17,7 @@ import ManageMedia from './Dashboards/AdminDashboard/ManageMedia';
 import ProductDetails from './pages/ProductDetails';
 import SubcategoriesPage from './pages/CategoryPages/SubCategoryPages';
 import SubcategoriesProducts from './pages/CategoryPages/SubcategoryProducts';
+import Cart from './pages/CartPage';
 
 function App() {
   
@@ -56,6 +57,10 @@ function App() {
     {
        path:"/products/subcategory/:subcategoryId",
        element: <SubcategoriesProducts/>
+    },
+    {
+       path:"/cart",
+       element: <Cart/>
     },
     {
       path: 'admindashboard',
