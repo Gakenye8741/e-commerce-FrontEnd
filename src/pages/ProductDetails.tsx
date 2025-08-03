@@ -1,6 +1,6 @@
 import { useParams, Link, useLocation } from "react-router-dom";
 import PuffLoader from "react-spinners/PuffLoader";
-import { useGetAllProductsQuery } from "../Features/Apis/ProductApi";
+import { useGetAllProductsQuery, useGetProductByIdQuery } from "../Features/Apis/ProductApi";
 import { useGetAllImagesQuery } from "../Features/Apis/MediaApi";
 import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
@@ -29,7 +29,11 @@ export default function ProductDetails() {
   const location = useLocation();
   const parsedId = parseInt(productId || "0", 10);
 
-  const { data: productData, isLoading: loadingProducts } = useGetAllProductsQuery({});
+  // ✅ Efficiently fetch a single product
+  const { data: product, isLoading: loadingProduct } = useGetProductByIdQuery(productId || "");
+  
+  // Keep full list of products and images for similar/new arrivals sections
+  const { data: allProductsData } = useGetAllProductsQuery({});
   const { data: imageData, isLoading: loadingImages } = useGetAllImagesQuery({});
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -39,15 +43,14 @@ export default function ProductDetails() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location.pathname]);
 
-  const products: Product[] = Array.isArray(productData)
-    ? productData
-    : productData?.allProducts || productData?.data || [];
+  const products: Product[] = Array.isArray(allProductsData)
+    ? allProductsData
+    : allProductsData?.allProducts || allProductsData?.data || [];
 
   const images: Image[] = Array.isArray(imageData)
     ? imageData
     : imageData?.allImages || imageData?.data || [];
 
-  const product = products.find((p) => p.productId === parsedId);
   const productImages = images.filter((img) => img.productId === parsedId);
 
   const similarProducts = products
@@ -63,7 +66,7 @@ export default function ProductDetails() {
 
   const getRandomRating = () => (Math.random() * 0.6 + 4).toFixed(1);
 
-  if (loadingProducts || loadingImages) {
+  if (loadingProduct || loadingImages) {
     return (
       <div className="flex justify-center items-center h-64">
         <PuffLoader color="#3B82F6" size={60} />
@@ -126,11 +129,9 @@ export default function ProductDetails() {
             <p className="text-2xl text-blue-300 font-semibold">
               Ksh {parseFloat(product.price).toFixed(2)}
             </p>
-
-            {/* Ratings */}
             <p className="text-yellow-300">⭐ {getRandomRating()} / 5.0</p>
 
-            {/* Quantity Selector */}
+            {/* Quantity */}
             <div>
               <label className="font-medium">Quantity</label>
               <div className="flex items-center gap-2 mt-2">
@@ -144,15 +145,11 @@ export default function ProductDetails() {
               Add to Cart
             </button>
 
-            {/* Description */}
             <div>
               <h3 className="text-xl font-semibold mb-1">Description</h3>
-              <p>
-                {product.description || "No description available for this product."}
-              </p>
+              <p>{product.description || "No description available for this product."}</p>
             </div>
 
-            {/* More Info */}
             <div>
               <h3 className="text-xl font-semibold mb-1">More Info</h3>
               <ul className="list-disc ml-5">
@@ -162,7 +159,6 @@ export default function ProductDetails() {
               </ul>
             </div>
 
-            {/* Delivery Estimate */}
             <div>
               <h3 className="text-xl font-semibold mb-1">Estimated Delivery</h3>
               <p>
@@ -171,7 +167,6 @@ export default function ProductDetails() {
               <p className="text-sm text-gray-300">Business days only. May vary by location.</p>
             </div>
 
-            {/* Return Policy */}
             <div>
               <h3 className="text-xl font-semibold mb-1">Return Policy</h3>
               <p>
@@ -254,7 +249,7 @@ export default function ProductDetails() {
           </div>
         </div>
 
-        {/* Zoom Modal */}
+        {/* Image Zoom Modal */}
         {selectedImage && (
           <div
             className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50"

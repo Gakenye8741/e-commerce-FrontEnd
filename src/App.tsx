@@ -15,6 +15,8 @@ import ManageSubcategories from './Dashboards/AdminDashboard/SubCategories';
 import ManageProducts from './Dashboards/AdminDashboard/ManageProducts';
 import ManageMedia from './Dashboards/AdminDashboard/ManageMedia';
 import ProductDetails from './pages/ProductDetails';
+import SubcategoriesPage from './pages/CategoryPages/SubCategoryPages';
+import SubcategoriesProducts from './pages/CategoryPages/SubcategoryProducts';
 
 function App() {
   
@@ -46,6 +48,14 @@ function App() {
     ,{
       path: "/products/:productId",
       element: <ProductDetails/>
+    }
+    ,{
+      path: "/Category/:categoryId",
+      element: <SubcategoriesPage/>
+    },
+    {
+       path:"/products/subcategory/:subcategoryId",
+       element: <SubcategoriesProducts/>
     },
     {
       path: 'admindashboard',
