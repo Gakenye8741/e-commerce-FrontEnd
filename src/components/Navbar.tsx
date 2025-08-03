@@ -10,20 +10,23 @@ import {
   ChevronDown,
   LayoutDashboard,
   LogOut,
-  X,
+  X
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { clearCredentials } from "../Features/Auth/AuthSlice";
 import type { RootState } from "../App/store";
-import { getCart, type CartItem /*, removeFromCart */ } from "../utils/CartStorage";
-
+import type { CartItem } from "../utils/CartTYpes";
+import { getCart } from "../utils/CartStorage";
+import { FaBars } from "react-icons/fa";
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
+  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -31,10 +34,18 @@ const Navbar = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const dashboardPath = user?.role === "admin" ? "/Admindashboard" : "/user/dashboard";
 
-  useEffect(() => {
+  const updateCart = () => {
     const storedCart = getCart();
     setCartItems(storedCart);
-  }, [cartDrawerOpen]);
+  };
+
+  useEffect(() => {
+    updateCart();
+    window.addEventListener("cartUpdated", updateCart);
+    return () => {
+      window.removeEventListener("cartUpdated", updateCart);
+    };
+  }, []);
 
   const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const subtotal = cartItems.reduce((sum, item) => sum + +item.price * item.quantity, 0);
@@ -44,15 +55,11 @@ const Navbar = () => {
     navigate("/login");
   };
 
-  // Optional remove handler
-  // const handleRemove = (productId: number) => {
-  //   removeFromCart(productId);
-  //   setCartItems(getCart());
-  // };
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <>
-      {/* Mobile Mini Top Navbar */}
+      {/* Mobile Topbar */}
       {isAuthenticated && (
         <div className="fixed top-0 left-0 right-0 z-50 md:hidden backdrop-blur-md bg-brandLight/70 shadow-sm text-brandDark text-sm px-4 py-2 flex justify-between items-center">
           <div className="text-2xl font-bold text-brandDark flex items-center gap-1">
@@ -70,32 +77,31 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center space-x-8 text-brandDark font-medium">
-            <Link to="/" className="flex items-center gap-1 hover:text-brandMid">
+            <Link to="/" className={`flex items-center gap-1 hover:text-brandMid ${isActive("/") && "text-brandMid"}`}>
               <Home className="w-4 h-4" /> Home
             </Link>
-            <Link to="/Shop" className="flex items-center gap-1 hover:text-brandMid">
+            <Link to="/Shop" className={`flex items-center gap-1 hover:text-brandMid ${isActive("/Shop") && "text-brandMid"}`}>
               <Store className="w-4 h-4" /> Shop
             </Link>
-            <Link to="/About" className="flex items-center gap-1 hover:text-brandMid">
+            <Link to="/About" className={`flex items-center gap-1 hover:text-brandMid ${isActive("/About") && "text-brandMid"}`}>
               <Info className="w-4 h-4" /> About
             </Link>
-            <Link to="/Contact" className="flex items-center gap-1 hover:text-brandMid">
+            <Link to="/Contact" className={`flex items-center gap-1 hover:text-brandMid ${isActive("/Contact") && "text-brandMid"}`}>
               <Mail className="w-4 h-4" /> Contact
             </Link>
           </div>
 
           <div className="flex items-center space-x-4 relative">
-            {/* 🛒 Floating Cart Icon */}
             <div
               className="relative cursor-pointer text-brandDark"
               onClick={() => setCartDrawerOpen(true)}
             >
               <ShoppingCart className="w-6 h-6" />
-              {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
-                  {totalItems}
-                </span>
-              )}
+              <span
+                className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full ${
+                  totalItems > 0 ? "bg-green-500" : "bg-gray-300"
+                }`}
+              ></span>
             </div>
 
             {!isAuthenticated ? (
@@ -137,7 +143,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* 🛒 Beautified Mini Cart Drawer */}
+      {/* Cart Drawer */}
       {cartDrawerOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 flex justify-end transition-opacity duration-300">
           <div className="w-80 bg-white h-full p-4 shadow-lg relative transform transition-transform duration-300">
@@ -165,19 +171,9 @@ const Navbar = () => {
                       <div className="flex-1">
                         <p className="text-sm font-semibold text-gray-800 truncate">{item.title}</p>
                         <p className="text-xs text-gray-500">
-                          Qty: {item.quantity} ×{" "}
-                          <span className="font-medium text-gray-700">Ksh {item.price}</span>
+                          Qty: {item.quantity} × <span className="font-medium text-gray-700">Ksh {item.price}</span>
                         </p>
                       </div>
-
-                      {/* Optional Remove button
-                      <button
-                        className="text-red-500 hover:text-red-700"
-                        onClick={() => handleRemove(item.productId)}
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                      */}
                     </li>
                   ))}
                 </ul>
@@ -199,6 +195,72 @@ const Navbar = () => {
           </div>
         </div>
       )}
+
+      {/* 📱 Bottom Nav */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden backdrop-blur-md bg-black/40 border-t border-white/10 shadow-md">
+        <div className="flex justify-around items-center text-white text-sm py-2 relative">
+          <Link to="/" className={`flex flex-col items-center ${isActive("/") ? "text-brandMid" : ""}`}>
+            <Home className="w-5 h-5" />
+            <span className="text-xs">Home</span>
+          </Link>
+
+          <Link to="/Shop" className={`flex flex-col items-center ${isActive("/Shop") ? "text-brandMid" : ""}`}>
+            <Store className="w-5 h-5" />
+            <span className="text-xs">Shop</span>
+          </Link>
+
+          <Link to="/About" className={`flex flex-col items-center ${isActive("/About") ? "text-brandMid" : ""}`}>
+            <Info className="w-5 h-5" />
+            <span className="text-xs">About</span>
+          </Link>
+
+           <Link to="/Contact" className={`flex flex-col items-center ${isActive("/About") ? "text-brandMid" : ""}`}>
+            <Mail className="w-5 h-5" />
+            <span className="text-xs">Contact</span>
+          </Link>
+
+          <button onClick={() => setMoreOpen(!moreOpen)} className="flex flex-col items-center">
+            <FaBars className="w-5 h-5" />
+            <span className="text-xs">More</span>
+          </button>
+
+          {moreOpen && isAuthenticated && (
+            <div className="absolute bottom-14 right-2 bg-white shadow-lg rounded-lg text-sm w-40 z-50 text-gray-700">
+              <Link
+                to={dashboardPath}
+                onClick={() => setMoreOpen(false)}
+                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+              >
+                <LayoutDashboard className="w-4 h-4" /> Dashboard
+              </Link>
+              <button
+                onClick={() => {
+                  setMoreOpen(false);
+                  handleLogout();
+                }}
+                className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+              >
+                <LogOut className="w-4 h-4" /> Logout
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 🛒 Floating Cart Button */}
+      <button
+        onClick={() => setCartDrawerOpen(true)}
+        className="fixed bottom-16 right-4 z-50 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 md:hidden"
+      >
+        <div className="relative">
+          <ShoppingCart className="w-6 h-6" />
+          <span
+            className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full ${
+              totalItems > 0 ? "bg-green-400" : "bg-gray-400"
+            }`}
+          ></span>
+        </div>
+      </button>
     </>
   );
 };

@@ -2,8 +2,9 @@ import  { useEffect, useState } from "react";
 
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
-import { clearCart, getCart, removeFromCart, type CartItem } from "../utils/CartStorage";
+import { clearCart, getCart, removeFromCart,  } from "../utils/CartStorage";
 import Navbar from "../components/Navbar";
+import type { CartItem } from "../utils/CartTYpes";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);

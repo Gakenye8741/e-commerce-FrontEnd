@@ -1,12 +1,5 @@
-// src/utils/cartStorage.ts
+import type { CartItem } from "./CartTYpes";
 
-export interface CartItem {
-  productId: number;
-  title: string;
-  price: number | string;
-  quantity: number;
-  image: string;
-}
 
 const CART_KEY = "cart";
 
@@ -28,11 +21,11 @@ export const addToCart = (item: CartItem): void => {
   localStorage.setItem(CART_KEY, JSON.stringify(cart));
 };
 
-export const clearCart = () => {
-  localStorage.removeItem(CART_KEY);
-};
-
-export const removeFromCart = (productId: number) => {
+export const removeFromCart = (productId: number): void => {
   const cart = getCart().filter((item) => item.productId !== productId);
   localStorage.setItem(CART_KEY, JSON.stringify(cart));
+};
+
+export const clearCart = (): void => {
+  localStorage.removeItem(CART_KEY);
 };

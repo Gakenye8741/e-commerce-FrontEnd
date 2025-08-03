@@ -6,9 +6,10 @@ import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import { Carousel } from "react-responsive-carousel";
 import { motion } from "framer-motion";
-import { toast } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { addToCart } from "../utils/CartStorage";
+import type { CartItem } from "../utils/CartTYpes";
 
 
 interface Product {
@@ -88,6 +89,7 @@ export default function ProductDetails() {
 
   return (
     <>
+    <Toaster position="top-right" />
       <Navbar />
       <motion.div
         className="max-w-5xl mx-auto px-6 py-10 mt-20 rounded-2xl shadow-lg bg-gradient-to-r from-[#1F2937] via-[#3B82F6] to-[#1F2937] backdrop-blur-md text-white"
@@ -150,13 +152,14 @@ export default function ProductDetails() {
               transition={{ duration: 0.2 }}
               onClick={() => {
                 try {
-                  addToCart({
+                  const item: CartItem = {
                     productId: product.productId,
                     title: product.title,
-                    price: product.price ?? 0,
+                    price: Number(product.price ?? 0), // ✅ Ensure number
                     quantity,
                     image: productImages[0]?.url || "/placeholder.jpg",
-                  });
+                  };
+                  addToCart(item);
                   toast.success("✅ Added to cart!");
                 } catch (err) {
                   console.error("Error adding to cart:", err);
