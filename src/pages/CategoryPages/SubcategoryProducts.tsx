@@ -5,7 +5,7 @@ import { useGetAllImagesQuery } from "../../Features/Apis/MediaApi";
 import { useGetSubcategoryByIdQuery } from "../../Features/Apis/SubCategoryApi";
 import PuffLoader from "react-spinners/PuffLoader";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState} from "react";
 
 // ...Interfaces
 interface Product {
