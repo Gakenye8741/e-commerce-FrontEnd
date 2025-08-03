@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import PuffLoader from "react-spinners/PuffLoader";
 import { useGetAllProductsQuery } from "../Features/Apis/ProductApi";
 import { useGetAllImagesQuery } from "../Features/Apis/MediaApi";
+import { motion } from "framer-motion";
 
 interface Product {
   productId: number;
@@ -17,7 +18,7 @@ interface Image {
 }
 
 export default function NewArrivals() {
-  const navigate = useNavigate(); // <-- React Router hook for navigation
+  const navigate = useNavigate();
 
   const {
     data: productData,
@@ -61,34 +62,47 @@ export default function NewArrivals() {
     images.find((img) => img.productId === productId)?.url || "/placeholder.jpg";
 
   return (
-    <section className="p-6 md:p-10 bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#0f172a]  rounded-2xl shadow-md mb-20">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">🆕 New Arrivals</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {latestProducts.map((product) => (
-          <div
+    <section className="p-6 md:p-10 bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#0f172a] rounded-2xl shadow-md mb-20">
+      <motion.h2
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="text-3xl font-bold mb-8 text-white text-center"
+      >
+        🆕 New Arrivals
+      </motion.h2>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {latestProducts.map((product, index) => (
+          <motion.div
             key={product.productId}
-            className="rounded-xl overflow-hidden bg-gray-50 shadow hover:shadow-lg transition-all"
+            className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl overflow-hidden shadow-xl text-white cursor-pointer"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: index * 0.1 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
           >
             <img
               src={getImageForProduct(product.productId)}
               alt={product.title || "Product"}
               className="w-full h-48 object-cover"
             />
-            <div className="p-4 space-y-2">
-              <h3 className="text-lg font-semibold text-gray-700 truncate">
-                {product.title}
-              </h3>
-              <p className="text-blue-600 font-bold">
-                Ksh{parseFloat(product.price).toFixed(2)}
+            <div className="p-4 space-y-3">
+              <h3 className="text-lg font-semibold truncate">{product.title}</h3>
+              <p className="text-blue-300 font-bold">
+                Ksh {parseFloat(product.price).toFixed(2)}
               </p>
-              <button
+              <motion.button
                 onClick={() => navigate(`/products/${product.productId}`)}
-                className="btn btn-sm btn-outline btn-primary w-full mt-2"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition text-white font-medium"
               >
                 View Details
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </section>

@@ -7,6 +7,8 @@ import { categoryApi } from "../Features/Apis/categoryApi";
 import { subcategoryApi } from "../Features/Apis/SubCategoryApi";
 import { productApi } from "../Features/Apis/ProductApi";
 import { mediaApi } from "../Features/Apis/MediaApi";
+import { ordersApi } from "../Features/Apis/ordersApi";
+import { orderItemsApi } from "../Features/Apis/rderitemsApi";
 
 
 // Create Persist Configuration for auth Slice
@@ -27,13 +29,15 @@ export const store = configureStore({
         [subcategoryApi.reducerPath]: subcategoryApi.reducer,
         [productApi.reducerPath]: productApi.reducer,
         [mediaApi.reducerPath]: mediaApi.reducer,
+        [ordersApi.reducerPath]: ordersApi.reducer,
+        [orderItemsApi.reducerPath]: orderItemsApi.reducer,
         auth: persistedAuthReducer,
 
     },
     middleware: (getDefaultMiddleware)=>
         getDefaultMiddleware({
             serializableCheck: false
-        }).concat(userApi.middleware,categoryApi.middleware,subcategoryApi.middleware,productApi.middleware,mediaApi.middleware)
+        }).concat(userApi.middleware,categoryApi.middleware,subcategoryApi.middleware,productApi.middleware,mediaApi.middleware,ordersApi.middleware,orderItemsApi.middleware)
 })
 
 export const persister = persistStore(store);
