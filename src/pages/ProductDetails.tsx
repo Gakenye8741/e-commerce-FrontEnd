@@ -12,7 +12,7 @@ interface Product {
   productId: number;
   title: string;
   description?: string;
-  price: string;
+  price?: string | number;
   brand?: string;
   category?: string;
 }
@@ -29,10 +29,9 @@ export default function ProductDetails() {
   const location = useLocation();
   const parsedId = parseInt(productId || "0", 10);
 
-  // ✅ Efficiently fetch a single product
-  const { data: product, isLoading: loadingProduct } = useGetProductByIdQuery(productId || "");
-  
-  // Keep full list of products and images for similar/new arrivals sections
+  const { data, isLoading: loadingProduct } = useGetProductByIdQuery(productId || "");
+  const product: Product | undefined = data?.product;
+
   const { data: allProductsData } = useGetAllProductsQuery({});
   const { data: imageData, isLoading: loadingImages } = useGetAllImagesQuery({});
 
@@ -65,6 +64,8 @@ export default function ProductDetails() {
   const deliveryRange = `${minDelivery.toDateString()} - ${maxDelivery.toDateString()}`;
 
   const getRandomRating = () => (Math.random() * 0.6 + 4).toFixed(1);
+  const formatPrice = (price: string | number | undefined) =>
+    price && !isNaN(Number(price)) ? Number(price).toFixed(2) : "N/A";
 
   if (loadingProduct || loadingImages) {
     return (
@@ -92,7 +93,7 @@ export default function ProductDetails() {
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Product Images */}
+          {/* Images */}
           <div className="space-y-4">
             {productImages.length > 1 ? (
               <Carousel
@@ -123,15 +124,14 @@ export default function ProductDetails() {
             )}
           </div>
 
-          {/* Product Info */}
+          {/* Details */}
           <div className="space-y-5">
             <h1 className="text-3xl font-bold">{product.title}</h1>
             <p className="text-2xl text-blue-300 font-semibold">
-              Ksh {parseFloat(product.price).toFixed(2)}
+              Ksh {formatPrice(product.price)}
             </p>
             <p className="text-yellow-300">⭐ {getRandomRating()} / 5.0</p>
 
-            {/* Quantity */}
             <div>
               <label className="font-medium">Quantity</label>
               <div className="flex items-center gap-2 mt-2">
@@ -193,7 +193,7 @@ export default function ProductDetails() {
                     <div className="p-4 flex-grow">
                       <h3 className="text-lg font-semibold truncate">{p.title}</h3>
                       <p className="text-blue-300 font-bold">
-                        Ksh {parseFloat(p.price).toFixed(2)}
+                        Ksh {formatPrice(p.price)}
                       </p>
                       <p className="text-yellow-300">⭐ {getRandomRating()} / 5.0</p>
                     </div>
@@ -231,7 +231,7 @@ export default function ProductDetails() {
                     <div className="p-4 flex-grow">
                       <h3 className="text-lg font-semibold truncate">{p.title}</h3>
                       <p className="text-blue-300 font-bold">
-                        Ksh {parseFloat(p.price).toFixed(2)}
+                        Ksh {formatPrice(p.price)}
                       </p>
                       <p className="text-yellow-300">⭐ {getRandomRating()} / 5.0</p>
                     </div>
