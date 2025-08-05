@@ -6,7 +6,7 @@ import Home from './pages/Home';
 import LoginPage from './pages/Login';
 import Register from './pages/Register';
 import EmailVerification from './pages/EmailVerification';
-import { Shop } from './pages/Shop';
+
 import { AdminDashBoard } from './pages/AdminDashBoard';
 import About from './pages/About';
 import ProtectedRoutes from './components/ProtectedRoutes';
@@ -18,6 +18,7 @@ import ProductDetails from './pages/ProductDetails';
 import SubcategoriesPage from './pages/CategoryPages/SubCategoryPages';
 import SubcategoriesProducts from './pages/CategoryPages/SubcategoryProducts';
 import Cart from './pages/CartPage';
+import Shop from './pages/Shop';
 
 function App() {
   
@@ -40,7 +41,7 @@ function App() {
       element: <EmailVerification/>
     },{
       path: "/Shop",
-      element: <Shop/>
+      element: <Shop />
     }
     ,{
       path: "/About",
