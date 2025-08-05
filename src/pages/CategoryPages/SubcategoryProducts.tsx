@@ -106,7 +106,7 @@ const ProductsBySubcategoryPage = () => {
         {/* Announcement */}
         <div className="overflow-hidden">
           <motion.div
-            className="whitespace-nowrap text-xl font-semibold text-center mt-20 text-pink-300 "
+            className="whitespace-nowrap text-xl font-semibold text-center mt-14 text-pink-300 "
             animate={{ x: ["100%", "-100%"] }}
             transition={{ repeat: Infinity, duration: 18, ease: "linear" }}
           >
