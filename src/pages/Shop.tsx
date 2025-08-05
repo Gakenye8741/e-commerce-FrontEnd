@@ -89,7 +89,7 @@ const Shop: React.FC = () => {
     <>
       <Navbar />
       <div className="min-h-screen bg-gradient-to-b from-[#1e293b] to-[#0f172a] p-4 sm:p-8 text-white">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-10 text-center">
+        <h1 className="text-3xl sm:text-4xl font-bold mt-16 text-center">
           🛍️ Browse Products by Subcategory
         </h1>
 
