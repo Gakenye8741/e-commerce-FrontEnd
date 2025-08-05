@@ -104,9 +104,9 @@ const ProductsBySubcategoryPage = () => {
       <Navbar />
       <div className="min-h-screen p-4 sm:p-6 bg-gradient-to-r from-[#1F2937] via-[#3B82F6] to-[#1F2937] text-white">
         {/* Announcement */}
-        <div className="overflow-hidden mb-6">
+        <div className="overflow-hidden">
           <motion.div
-            className="whitespace-nowrap text-xl font-semibold text-center text-pink-300"
+            className="whitespace-nowrap text-xl font-semibold text-center mt-20 text-pink-300 "
             animate={{ x: ["100%", "-100%"] }}
             transition={{ repeat: Infinity, duration: 18, ease: "linear" }}
           >
