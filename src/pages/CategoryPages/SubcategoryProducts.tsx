@@ -1,13 +1,13 @@
-// ...Imports
+// Imports
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetAllProductsQuery } from "../../Features/Apis/ProductApi";
 import { useGetAllImagesQuery } from "../../Features/Apis/MediaApi";
 import { useGetSubcategoryByIdQuery } from "../../Features/Apis/SubCategoryApi";
 import PuffLoader from "react-spinners/PuffLoader";
 import { motion } from "framer-motion";
-import { useState} from "react";
+import { useState } from "react";
 
-// ...Interfaces
+// Interfaces
 interface Product {
   productId: number;
   title: string;
@@ -26,7 +26,6 @@ const ProductsBySubcategoryPage = () => {
   const navigate = useNavigate();
   const subcategoryIdNum = Number(subcategoryId);
 
-  // State
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("");
   const [minPrice, setMinPrice] = useState("");
@@ -34,7 +33,6 @@ const ProductsBySubcategoryPage = () => {
   const [minRating, setMinRating] = useState("");
   const [showSidebar, setShowSidebar] = useState(false);
 
-  // Queries
   const { data: productData, isLoading: loadingProducts, isError: errorProducts } = useGetAllProductsQuery(null);
   const { data: imageData, isLoading: loadingImages, isError: errorImages } = useGetAllImagesQuery(null);
   const { data: subcategoryData, isLoading: loadingSubcategory, isError: errorSubcategory } = useGetSubcategoryByIdQuery(subcategoryIdNum);
@@ -42,7 +40,6 @@ const ProductsBySubcategoryPage = () => {
   const products: Product[] = Array.isArray(productData) ? productData : productData?.allProducts || [];
   const images: Image[] = Array.isArray(imageData) ? imageData : imageData?.allImages || [];
 
-  // Loader & Error Handling
   if (loadingProducts || loadingImages || loadingSubcategory) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -50,6 +47,7 @@ const ProductsBySubcategoryPage = () => {
       </div>
     );
   }
+
   if (errorProducts || errorImages || errorSubcategory) {
     return (
       <div className="p-6 text-red-500 text-center font-semibold">
@@ -58,7 +56,6 @@ const ProductsBySubcategoryPage = () => {
     );
   }
 
-  // Filtering
   let filteredProducts = products.filter(
     (product) => product.subcategoryId === subcategoryIdNum
   );
@@ -85,7 +82,6 @@ const ProductsBySubcategoryPage = () => {
     );
   }
 
-  // Sorting
   switch (sortOption) {
     case "price-asc":
       filteredProducts.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
@@ -102,7 +98,6 @@ const ProductsBySubcategoryPage = () => {
     images.find((img) => img.productId === productId)?.url ||
     "https://dummyimage.com/300x200/ccc/000.png&text=No+Image";
 
-  // JSX
   return (
     <div className="min-h-screen p-4 sm:p-6 bg-gradient-to-r from-[#1F2937] via-[#3B82F6] to-[#1F2937] text-white">
       {/* Announcement */}
@@ -140,17 +135,30 @@ const ProductsBySubcategoryPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-col md:flex-row gap-6 relative">
+      <div className="flex flex-col md:flex-row gap-6 relative md:h-[calc(100vh-10rem)]">
         {/* Sidebar */}
         <motion.div
           initial={{ x: "-100%", opacity: 0 }}
           animate={{ x: showSidebar || window.innerWidth >= 768 ? 0 : "-100%", opacity: 1 }}
           transition={{ duration: 0.4 }}
-          className={`z-40 bg-black/30 md:bg-transparent backdrop-blur-lg p-4 rounded-xl md:p-0 absolute md:static top-0 left-0 h-full w-3/4 md:w-1/4 md:block ${
+          className={`relative z-40 bg-black/30 md:bg-transparent backdrop-blur-lg p-4 rounded-xl md:p-0 absolute md:static top-0 left-0 w-3/4 md:w-1/4 md:block ${
             showSidebar ? "block" : "hidden"
           }`}
+          style={{ position: "sticky", top: "1rem", alignSelf: "flex-start" }}
         >
-          <div className="space-y-4">
+          {/* Close button (mobile) */}
+          {showSidebar && (
+            <button
+              onClick={() => setShowSidebar(false)}
+              className="md:hidden absolute top-2 right-2 text-white text-xl bg-red-500 rounded-full w-8 h-8 flex items-center justify-center"
+              aria-label="Close Filters"
+            >
+              ×
+            </button>
+          )}
+
+          {/* Filter Inputs */}
+          <div className="space-y-4 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2 scroll-smooth">
             <input
               type="text"
               placeholder="Search products..."
@@ -192,6 +200,10 @@ const ProductsBySubcategoryPage = () => {
                 <option key={star} value={star}>{`${star}+ Stars`}</option>
               ))}
             </select>
+          </div>
+
+          {/* Sticky Reset Button */}
+          <div className="sticky bottom-2 bg-black/50 p-2 rounded-xl mt-4">
             <button
               onClick={() => {
                 setSearchTerm("");
@@ -208,7 +220,7 @@ const ProductsBySubcategoryPage = () => {
         </motion.div>
 
         {/* Product Grid */}
-        <div className="w-full md:w-3/4">
+        <div className="w-full md:w-3/4 overflow-y-auto pr-2 scroll-smooth">
           {!filteredProducts.length ? (
             <div className="p-6 text-center text-gray-300 font-medium">
               No products found matching your filters.
