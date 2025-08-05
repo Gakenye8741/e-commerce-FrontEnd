@@ -266,7 +266,7 @@ const ProductsBySubcategoryPage = () => {
         </div>
 
         {/* Floating Buttons */}
-        <div className="fixed bottom-40 right-6 flex flex-col items-end space-y-3 z-50">
+        <div className="fixed bottom-66 right-6 flex flex-col items-end space-y-3 z-50">
           <button
             className="w-12 h-12 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition flex items-center justify-center"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}

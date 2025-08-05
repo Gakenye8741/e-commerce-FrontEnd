@@ -10,7 +10,7 @@ import {
   ChevronDown,
   LayoutDashboard,
   LogOut,
-  X
+  X,
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -201,47 +201,68 @@ const Navbar = () => {
         <div className="flex justify-around items-center text-white text-sm py-2 relative">
           <Link to="/" className={`flex flex-col items-center ${isActive("/") ? "text-brandMid" : ""}`}>
             <Home className="w-5 h-5" />
-            <span className="text-xs">Home</span>
+            <span className="text-xs sm:inline hidden">Home</span>
           </Link>
 
           <Link to="/Shop" className={`flex flex-col items-center ${isActive("/Shop") ? "text-brandMid" : ""}`}>
             <Store className="w-5 h-5" />
-            <span className="text-xs">Shop</span>
+            <span className="text-xs sm:inline hidden">Shop</span>
           </Link>
 
           <Link to="/About" className={`flex flex-col items-center ${isActive("/About") ? "text-brandMid" : ""}`}>
             <Info className="w-5 h-5" />
-            <span className="text-xs">About</span>
+            <span className="text-xs sm:inline hidden">About</span>
           </Link>
 
-           <Link to="/Contact" className={`flex flex-col items-center ${isActive("/About") ? "text-brandMid" : ""}`}>
+          <Link to="/Contact" className={`flex flex-col items-center ${isActive("/Contact") ? "text-brandMid" : ""}`}>
             <Mail className="w-5 h-5" />
-            <span className="text-xs">Contact</span>
+            <span className="text-xs sm:inline hidden">Contact</span>
           </Link>
 
           <button onClick={() => setMoreOpen(!moreOpen)} className="flex flex-col items-center">
             <FaBars className="w-5 h-5" />
-            <span className="text-xs">More</span>
+            <span className="text-xs sm:inline hidden">More</span>
           </button>
 
-          {moreOpen && isAuthenticated && (
+          {moreOpen && (
             <div className="absolute bottom-14 right-2 bg-white shadow-lg rounded-lg text-sm w-40 z-50 text-gray-700">
-              <Link
-                to={dashboardPath}
-                onClick={() => setMoreOpen(false)}
-                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
-              >
-                <LayoutDashboard className="w-4 h-4" /> Dashboard
-              </Link>
-              <button
-                onClick={() => {
-                  setMoreOpen(false);
-                  handleLogout();
-                }}
-                className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
-              >
-                <LogOut className="w-4 h-4" /> Logout
-              </button>
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    to={dashboardPath}
+                    onClick={() => setMoreOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+                  >
+                    <LayoutDashboard className="w-4 h-4" /> Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setMoreOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+                  >
+                    <LogOut className="w-4 h-4" /> Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/Login"
+                    onClick={() => setMoreOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+                  >
+                    <LogIn className="w-4 h-4" /> Login
+                  </Link>
+                  <Link
+                    to="/Register"
+                    onClick={() => setMoreOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+                  >
+                    <UserPlus className="w-4 h-4" /> Register
+                  </Link>
+                </>
+              )}
             </div>
           )}
         </div>
@@ -250,7 +271,7 @@ const Navbar = () => {
       {/* 🛒 Floating Cart Button */}
       <button
         onClick={() => setCartDrawerOpen(true)}
-        className="fixed bottom-16 right-4 z-50 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 md:hidden"
+        className="fixed bottom-51 right-6 z-50 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 md:hidden"
       >
         <div className="relative">
           <ShoppingCart className="w-6 h-6" />
