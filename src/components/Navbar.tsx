@@ -20,6 +20,9 @@ import type { CartItem } from "../utils/CartTYpes";
 import { getCart } from "../utils/CartStorage";
 import { FaBars } from "react-icons/fa";
 
+// ⬆️ Keep your imports as-is
+// import {...} from "...";
+
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
@@ -59,17 +62,30 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Mobile Topbar */}
+      {/* ✅ Mobile Topbar with Cart Icon */}
       {isAuthenticated && (
         <div className="fixed top-0 left-0 right-0 z-50 md:hidden backdrop-blur-md bg-brandLight/70 shadow-sm text-brandDark text-sm px-4 py-2 flex justify-between items-center">
-          <div className="text-2xl font-bold text-brandDark flex items-center gap-1">
-            Nova Cart <ShoppingCart />
+          <div className="text-xl font-bold flex items-center gap-2">
+            Nova Cart <ShoppingCart className="w-5 h-5" />
           </div>
-          <span>Hello, {user?.firstName || "User"} 👋</span>
+
+          <div className="flex items-center gap-4">
+            <span>Hello, {user?.firstName || "User"} 👋</span>
+
+            {/* 🛒 Cart Icon in Topbar */}
+            <button onClick={() => setCartDrawerOpen(true)} className="relative">
+              <ShoppingCart className="w-5 h-5" />
+              <span
+                className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full ${
+                  totalItems > 0 ? "bg-green-500" : "bg-gray-400"
+                }`}
+              ></span>
+            </button>
+          </div>
         </div>
       )}
 
-      {/* Desktop Navbar */}
+      {/* ✅ Desktop Navbar */}
       <nav className="bg-brandLight/80 backdrop-blur-md shadow-md fixed top-0 left-0 right-0 z-40 h-20 md:flex hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between w-full">
           <div className="text-2xl font-bold text-brandDark flex items-center gap-1">
@@ -92,6 +108,7 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center space-x-4 relative">
+            {/* Cart Icon Desktop */}
             <div
               className="relative cursor-pointer text-brandDark"
               onClick={() => setCartDrawerOpen(true)}
@@ -104,6 +121,7 @@ const Navbar = () => {
               ></span>
             </div>
 
+            {/* Auth Links */}
             {!isAuthenticated ? (
               <div className="flex items-center space-x-4 text-sm font-medium">
                 <Link to="/Login" className="flex items-center gap-1 hover:text-brandMid">
@@ -143,7 +161,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Cart Drawer */}
+      {/* ✅ Cart Drawer */}
       {cartDrawerOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 flex justify-end transition-opacity duration-300">
           <div className="w-80 bg-white h-full p-4 shadow-lg relative transform transition-transform duration-300">
@@ -196,34 +214,30 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* 📱 Bottom Nav */}
+      {/* ✅ Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden backdrop-blur-md bg-black/40 border-t border-white/10 shadow-md">
         <div className="flex justify-around items-center text-white text-sm py-2 relative">
           <Link to="/" className={`flex flex-col items-center ${isActive("/") ? "text-brandMid" : ""}`}>
             <Home className="w-5 h-5" />
-            <span className="text-xs sm:inline hidden">Home</span>
           </Link>
 
           <Link to="/Shop" className={`flex flex-col items-center ${isActive("/Shop") ? "text-brandMid" : ""}`}>
             <Store className="w-5 h-5" />
-            <span className="text-xs sm:inline hidden">Shop</span>
           </Link>
 
           <Link to="/About" className={`flex flex-col items-center ${isActive("/About") ? "text-brandMid" : ""}`}>
             <Info className="w-5 h-5" />
-            <span className="text-xs sm:inline hidden">About</span>
           </Link>
 
           <Link to="/Contact" className={`flex flex-col items-center ${isActive("/Contact") ? "text-brandMid" : ""}`}>
             <Mail className="w-5 h-5" />
-            <span className="text-xs sm:inline hidden">Contact</span>
           </Link>
 
           <button onClick={() => setMoreOpen(!moreOpen)} className="flex flex-col items-center">
             <FaBars className="w-5 h-5" />
-            <span className="text-xs sm:inline hidden">More</span>
           </button>
 
+          {/* More Dropdown */}
           {moreOpen && (
             <div className="absolute bottom-14 right-2 bg-white shadow-lg rounded-lg text-sm w-40 z-50 text-gray-700">
               {isAuthenticated ? (
@@ -268,22 +282,9 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* 🛒 Floating Cart Button */}
-      <button
-        onClick={() => setCartDrawerOpen(true)}
-        className="fixed bottom-51 right-6 z-50 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 md:hidden"
-      >
-        <div className="relative">
-          <ShoppingCart className="w-6 h-6" />
-          <span
-            className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full ${
-              totalItems > 0 ? "bg-green-400" : "bg-gray-400"
-            }`}
-          ></span>
-        </div>
-      </button>
     </>
   );
 };
 
 export default Navbar;
+
