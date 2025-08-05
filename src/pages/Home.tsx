@@ -1,4 +1,6 @@
 import Navbar from "../components/Navbar"
+import SubcategoriesHomepage from "../Home-Components/Categories"
+
 import FeatureHighlights from "../Home-Components/FeatureHighlights"
 import HeroCarousel from "../Home-Components/Hero-section"
 import NewArrivals from "../Home-Components/NewArrivals"
@@ -13,6 +15,8 @@ const Home = () => {
      <FeatureHighlights/>
      <CategoriesGrid/>
      <NewArrivals />
+     <SubcategoriesHomepage/>
+    
    </>
   )
 }
