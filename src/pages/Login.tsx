@@ -31,7 +31,7 @@ const Login = () => {
       dispatch(setCredentials(res))
       toast.success('✅ Login successful!', { id: loadingToast });
       if(res.role === "admin"){
-        setTimeout(() => navigate('/Admindashboard'), 1000); 
+        setTimeout(() => navigate('/Admindashboard/ManageCategories'), 1000); 
       }else{
          setTimeout(() => navigate('/dashboard'), 1000); 
       }
