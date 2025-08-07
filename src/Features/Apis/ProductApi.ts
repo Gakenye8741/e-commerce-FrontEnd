@@ -6,10 +6,17 @@ export const productApi = createApi({
   tagTypes: ['products', 'product'],
   endpoints: (builder) => ({
     // 📦 Get All Products
-    getAllProducts: builder.query({
-      query: () => 'All-Products',
-      providesTags: ['products'],
-    }),
+   getAllProducts: builder.query({
+  query: () => 'All-Products',
+  transformResponse: (response: any) => {
+    // Handles multiple formats
+    if (Array.isArray(response)) return response;
+    if (response?.products && Array.isArray(response.products)) return response.products;
+    return []; // fallback to empty array
+  },
+  providesTags: ['products'],
+}),
+
 
     // 🔍 Get Product by ID
     getProductById: builder.query({

@@ -3,6 +3,7 @@ import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import PuffLoader from "react-spinners/PuffLoader";
+import Swal from "sweetalert2";
 
 import Navbar from "../components/Navbar";
 import { clearCart, getCart, removeFromCart } from "../utils/CartStorage";
@@ -78,9 +79,24 @@ export default function Cart() {
       }
 
       toast.success("✅ Order placed successfully!");
-      // Do NOT clear the cart
+
+      await Swal.fire({
+        title: "Success!",
+        text: "✅ Your order was placed successfully.",
+        icon: "success",
+        confirmButtonColor: "#2563eb",
+      });
+
     } catch (error: any) {
       toast.error("❌ Failed to create order");
+
+      Swal.fire({
+        title: "Error!",
+        text: "❌ Something went wrong while placing your order.",
+        icon: "error",
+        confirmButtonColor: "#d33",
+      });
+
     } finally {
       setIsCreating(false);
     }
@@ -89,14 +105,40 @@ export default function Cart() {
   const handleDeleteOrder = async () => {
     if (!orderId) return;
 
+    const itemList = cartItems
+      .map((item) => `- ${item.title} (Qty: ${item.quantity})`)
+      .join("\n");
+
+    const result = await Swal.fire({
+      title: "Are you sure you want to delete the order?",
+      html: `<pre style="text-align:left">${itemList}</pre>`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       await deleteOrder(orderId).unwrap();
-      toast.success("🗑️ Order deleted successfully");
-
-      // Reset order state but NOT cart
       setOrderId(null);
-    } catch (error: any) {
-      toast.error("❌ Failed to delete order");
+
+      await Swal.fire({
+        title: "Deleted!",
+        text: "🗑️ Order deleted successfully.",
+        icon: "success",
+        confirmButtonColor: "#2563eb"
+      });
+
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: "❌ Failed to delete order.",
+        icon: "error",
+        confirmButtonColor: "#d33"
+      });
     }
   };
 

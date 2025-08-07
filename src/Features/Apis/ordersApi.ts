@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type { RootState } from '../../App/store'; // <-- Make sure the path is correct
 
 export interface Order {
   orderId: number;
@@ -16,6 +17,13 @@ export const ordersApi = createApi({
   reducerPath: 'ordersApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://e-commerce-backend-esgr.onrender.com/api/',
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).auth.token;
+      if (token) {
+        headers.set('Authorization', `${token}`);
+      }
+      return headers;
+    },
   }),
   tagTypes: ['orders', 'order'],
   endpoints: (builder) => ({
@@ -37,7 +45,7 @@ export const ordersApi = createApi({
       providesTags: ['orders'],
     }),
 
-    // ➕ Create Order (💡 FIXED TRANSFORM)
+    // ➕ Create Order
     createOrder: builder.mutation<Order, { userId: number; totalAmount: number }>({
       query: (orderData) => ({
         url: 'create-Order',

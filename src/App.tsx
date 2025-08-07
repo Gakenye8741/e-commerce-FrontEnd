@@ -75,8 +75,7 @@ function App() {
         { path: 'ManageCategories', element: <ManageCategories /> },
         { path: 'ManageSubCategories', element: <ManageSubcategories/> },
         { path: 'ManageProducts', element: <ManageProducts/> },
-        { path: 'ManageImages', element: <ManageMedia /> },
-    
+        { path: 'ManageImages', element: <ManageMedia /> }
         
       ],
     },
