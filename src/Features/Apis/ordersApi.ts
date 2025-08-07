@@ -1,50 +1,65 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+export interface Order {
+  orderId: number;
+  userId: number;
+  totalAmount: string;
+  createdAt: string;
+}
+
+interface CreateOrderResponse {
+  message: string;
+  order: Order;
+}
+
 export const ordersApi = createApi({
   reducerPath: 'ordersApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://e-commerce-backend-esgr.onrender.com/api/' }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'https://e-commerce-backend-esgr.onrender.com/api/',
+  }),
   tagTypes: ['orders', 'order'],
   endpoints: (builder) => ({
     // 📦 Get All Orders
-    getAllOrders: builder.query({
+    getAllOrders: builder.query<Order[], void>({
       query: () => 'AllOrders',
       providesTags: ['orders'],
     }),
 
     // 🔍 Get Order by ID
-    getOrderById: builder.query({
+    getOrderById: builder.query<Order, number>({
       query: (orderId) => `Order/${orderId}`,
       providesTags: ['order'],
     }),
 
     // 👤 Get Orders by User ID
-    getOrdersByUserId: builder.query({
+    getOrdersByUserId: builder.query<Order[], number>({
       query: (userId) => `UserOrders/${userId}`,
       providesTags: ['orders'],
     }),
 
-    // ➕ Create Order
-    createOrder: builder.mutation({
+    // ➕ Create Order (💡 FIXED TRANSFORM)
+    createOrder: builder.mutation<Order, { userId: number; totalAmount: number }>({
       query: (orderData) => ({
         url: 'create-Order',
         method: 'POST',
         body: orderData,
       }),
+      transformResponse: (response: CreateOrderResponse) => response.order,
       invalidatesTags: ['orders'],
     }),
 
     // ✏️ Update Order
-    updateOrder: builder.mutation({
-      query: ({ orderId, ...updateData }) => ({
+    updateOrder: builder.mutation<Order, { orderId: number; data: Partial<Order> }>({
+      query: ({ orderId, data }) => ({
         url: `update-Order/${orderId}`,
         method: 'PUT',
-        body: updateData,
+        body: data,
       }),
       invalidatesTags: ['orders', 'order'],
     }),
 
     // 🗑️ Delete Order
-    deleteOrder: builder.mutation({
+    deleteOrder: builder.mutation<{ success: boolean }, number>({
       query: (orderId) => ({
         url: `delete-Order/${orderId}`,
         method: 'DELETE',
