@@ -1,8 +1,9 @@
+// src/Features/Apis/OrderItemApis.ts
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../../App/store';
 
 export interface OrderItem {
-  id?: number;
+  orderItemId: number;
   orderId: number;
   productId: number;
   quantity: number;
@@ -23,7 +24,13 @@ export const orderItemsApi = createApi({
   }),
   tagTypes: ['orderItem', 'orderItemByOrder'],
   endpoints: (builder) => ({
-    // ➕ Create Order Item
+    // ✅ Get all order items (no arguments)
+   getAllOrderItems: builder.query<{ items: OrderItem[]; message: string }, void>({
+      query: () => 'AllOrderItems',
+      providesTags: ['orderItem'],
+    }),
+
+    // ✅ Other endpoints
     createOrderItem: builder.mutation<OrderItem, Partial<OrderItem>>({
       query: (data) => ({
         url: 'create-OrderItem',
@@ -33,8 +40,10 @@ export const orderItemsApi = createApi({
       invalidatesTags: ['orderItem', 'orderItemByOrder'],
     }),
 
-    // 🔄 Update Order Item
-    updateOrderItem: builder.mutation<OrderItem, { orderItemId: number; data: Partial<OrderItem> }>({
+    updateOrderItem: builder.mutation<
+      OrderItem,
+      { orderItemId: number; data: Partial<OrderItem> }
+    >({
       query: ({ orderItemId, data }) => ({
         url: `update-OrderItem/${orderItemId}`,
         method: 'PUT',
@@ -43,25 +52,16 @@ export const orderItemsApi = createApi({
       invalidatesTags: ['orderItem', 'orderItemByOrder'],
     }),
 
-    // 📥 Get All Order Items
-    getAllOrderItems: builder.query<OrderItem[], void>({
-      query: () => 'AllOrderItems',
-      providesTags: ['orderItem'],
-    }),
-
-    // 📥 Get Order Item by ID
     getOrderItemById: builder.query<OrderItem, number>({
       query: (orderItemId) => `OrderItem/${orderItemId}`,
       providesTags: ['orderItem'],
     }),
 
-    // 📥 Get Order Items by Order ID
     getOrderItemsByOrderId: builder.query<OrderItem[], number>({
       query: (orderId) => `OrderItemsByOrder/${orderId}`,
       providesTags: ['orderItemByOrder'],
     }),
 
-    // ❌ Delete Order Item
     deleteOrderItem: builder.mutation<{ success: boolean }, number>({
       query: (orderItemId) => ({
         url: `delete-OrderItem/${orderItemId}`,
@@ -73,9 +73,9 @@ export const orderItemsApi = createApi({
 });
 
 export const {
+  useGetAllOrderItemsQuery,
   useCreateOrderItemMutation,
   useUpdateOrderItemMutation,
-  useGetAllOrderItemsQuery,
   useGetOrderItemByIdQuery,
   useGetOrderItemsByOrderIdQuery,
   useDeleteOrderItemMutation,

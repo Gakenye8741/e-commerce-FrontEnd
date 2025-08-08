@@ -1,3 +1,5 @@
+// pages/CartPage.tsx
+
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
@@ -6,7 +8,13 @@ import PuffLoader from "react-spinners/PuffLoader";
 import Swal from "sweetalert2";
 
 import Navbar from "../components/Navbar";
-import { clearCart, getCart, removeFromCart } from "../utils/CartStorage";
+
+import {
+  clearCart,
+  getCart,
+  removeFromCart,
+  updateQuantity,
+} from "../utils/CartStorage";
 
 import type { RootState } from "../App/store";
 import type { CartItem } from "../utils/CartTYpes";
@@ -20,7 +28,7 @@ import {
   useDeleteOrderMutation,
 } from "../Features/Apis/ordersApi";
 
-export default function Cart() {
+export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const [orderId, setOrderId] = useState<number | null>(null);
@@ -34,16 +42,31 @@ export default function Cart() {
     setCartItems(getCart());
   }, []);
 
+  const refreshCart = () => {
+    setCartItems(getCart());
+  };
+
   const handleRemove = (productId: number) => {
     removeFromCart(productId);
-    setCartItems(getCart());
+    refreshCart();
     toast.success("🗑️ Removed from cart");
   };
 
   const handleClear = () => {
     clearCart();
-    setCartItems([]);
+    refreshCart();
     toast("🧹 Cart cleared");
+  };
+
+  const handleQtyChange = (productId: number, delta: number) => {
+    const item = cartItems.find((i) => i.productId === productId);
+    if (!item) return;
+
+    const newQty = item.quantity + delta;
+    if (newQty < 1) return;
+
+    updateQuantity(productId, newQty);
+    refreshCart();
   };
 
   const total = cartItems.reduce(
@@ -69,13 +92,12 @@ export default function Cart() {
       setOrderId(newOrderId);
 
       for (const item of cartItems) {
-        const payload = {
+        await createOrderItem({
           orderId: newOrderId,
           productId: item.productId,
           quantity: item.quantity,
           price: Number(item.price),
-        };
-        await createOrderItem(payload).unwrap();
+        }).unwrap();
       }
 
       toast.success("✅ Order placed successfully!");
@@ -175,8 +197,25 @@ export default function Cart() {
                     />
                     <div>
                       <h2 className="font-semibold">{item.title}</h2>
-                      <p>Qty: {item.quantity}</p>
-                      <p>Ksh {Number(item.price).toFixed(2)}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <button
+                          onClick={() => handleQtyChange(item.productId, -1)}
+                          className="px-2 py-1 rounded bg-gray-600 hover:bg-amber-950"
+                        >
+                          -
+                        </button>
+                        <span>{item.quantity}</span>
+                        <button
+                          onClick={() => handleQtyChange(item.productId, 1)}
+                          className="px-2 py-1 rounded bg-gray-600 hover:bg-amber-950"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <p className="mt-1 text-sm text-gray-600">
+                        Unit: Ksh {Number(item.price).toFixed(2)} <br />
+                        Total: Ksh {(item.quantity * Number(item.price)).toFixed(2)}
+                      </p>
                     </div>
                   </div>
                   <button

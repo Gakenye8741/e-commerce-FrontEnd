@@ -1,5 +1,6 @@
-import type { CartItem } from "./CartTYpes";
+// utils/CartStorage.ts
 
+import type { CartItem } from "./CartTYpes";
 
 const CART_KEY = "cart";
 
@@ -28,4 +29,14 @@ export const removeFromCart = (productId: number): void => {
 
 export const clearCart = (): void => {
   localStorage.removeItem(CART_KEY);
+};
+
+export const updateQuantity = (productId: number, newQuantity: number): void => {
+  const cart = getCart().map((item) => {
+    if (item.productId === productId) {
+      return { ...item, quantity: Math.max(1, newQuantity) };
+    }
+    return item;
+  });
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
 };
