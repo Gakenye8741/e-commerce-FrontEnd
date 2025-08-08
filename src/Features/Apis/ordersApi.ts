@@ -5,6 +5,7 @@ export interface Order {
   orderId: number;
   userId: number;
   totalAmount: string;
+  status: 'pending' | 'Completed'  | 'cancelled';
   createdAt: string;
 }
 
@@ -28,10 +29,10 @@ export const ordersApi = createApi({
   tagTypes: ['orders', 'order'],
   endpoints: (builder) => ({
     // 📦 Get All Orders
-    getAllOrders: builder.query<Order[], void>({
-      query: () => 'AllOrders',
-      providesTags: ['orders'],
-    }),
+   getAllOrders: builder.query<{ allOrders: Order[] }, void>({
+  query: () => 'AllOrders',
+  providesTags: ['orders'],
+}),
 
     // 🔍 Get Order by ID
     getOrderById: builder.query<Order, number>({

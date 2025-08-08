@@ -17,30 +17,36 @@ interface OrderItemEdit {
 }
 
 export default function ManageOrders() {
-  const {
-    data: orderItemsRaw,
-    isLoading,
-    isError,
-  } = useGetAllOrderItemsQuery();
-
+  const { data: orderItemsRaw, isLoading, isError } = useGetAllOrderItemsQuery();
   const { data: productData } = useGetAllProductsQuery(undefined);
   const [deleteOrderItem] = useDeleteOrderItemMutation();
   const [updateOrderItem] = useUpdateOrderItemMutation();
 
-  console.log("🧾 orderItemsRaw:", orderItemsRaw);
-  console.log("📦 productData:", productData);
-
   const orderItems = Array.isArray(orderItemsRaw)
     ? orderItemsRaw
     : orderItemsRaw?.items ?? [];
-
   const products = productData?.allProducts ?? [];
-
-  const getProductName = (productId: number) =>
-    products.find((p: any) => p.productId === productId)?.title || `#${productId}`;
 
   const [isEditing, setIsEditing] = useState(false);
   const [currentEdit, setCurrentEdit] = useState<OrderItemEdit | null>(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [orderIdFilter, setOrderIdFilter] = useState("");
+
+  const filteredItems = orderItems.filter((item: any) =>
+    item.orderId.toString().includes(orderIdFilter.trim())
+  );
+
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const displayedItems = filteredItems.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const getProductName = (productId: number) =>
+    products.find((p: any) => p.productId === productId)?.title ||
+    `#${productId}`;
 
   const openEditModal = (item: any) => {
     setCurrentEdit({
@@ -111,14 +117,42 @@ export default function ManageOrders() {
     );
   }
 
-  const grandTotal = orderItems.reduce((sum: number, item: any) => {
+  const grandTotal = displayedItems.reduce((sum: number, item: any) => {
     const unitPrice = parseFloat(item.price || "0");
     return sum + unitPrice * item.quantity;
   }, 0);
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6 text-primary">📦 Manage Orders</h1>
+      <h1 className="text-2xl font-bold mb-6 text-primary">📦 Manage Order Items</h1>
+
+      <div className="flex justify-between mb-4 items-center">
+        <input
+          type="text"
+          placeholder="Filter by Order ID..."
+          value={orderIdFilter}
+          onChange={(e) => {
+            setOrderIdFilter(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="input input-bordered"
+        />
+
+        <select
+          className="select select-bordered"
+          value={itemsPerPage}
+          onChange={(e) => {
+            setItemsPerPage(Number(e.target.value));
+            setCurrentPage(1);
+          }}
+        >
+          {[5, 10, 20, 50].map((size) => (
+            <option key={size} value={size}>
+              {size} per page
+            </option>
+          ))}
+        </select>
+      </div>
 
       <div className="overflow-x-auto">
         <table className="table table-zebra w-full">
@@ -133,7 +167,7 @@ export default function ManageOrders() {
             </tr>
           </thead>
           <tbody>
-            {orderItems.map((item: any) => {
+            {displayedItems.map((item: any) => {
               const unitPrice = parseFloat(item.price || "0");
               const totalPrice = unitPrice * item.quantity;
 
@@ -166,10 +200,23 @@ export default function ManageOrders() {
       </div>
 
       <div className="text-right mt-4 font-bold text-lg text-primary">
-        Total: Ksh {grandTotal.toFixed(2)}
+        Page Total: Ksh {grandTotal.toFixed(2)}
       </div>
 
-      {/* Animated Edit Modal */}
+      {/* Pagination */}
+      <div className="mt-6 flex justify-center gap-2">
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`btn btn-sm ${page === currentPage ? "btn-primary" : "btn-ghost"}`}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
+
+      {/* Edit Modal (Animated) */}
       <AnimatePresence>
         {isEditing && currentEdit && (
           <motion.div
@@ -185,7 +232,9 @@ export default function ManageOrders() {
               transition={{ duration: 0.3 }}
               className="bg-base-100 rounded-lg p-6 w-full max-w-md shadow-lg"
             >
-              <h3 className="text-xl font-semibold mb-4 text-primary">Edit Order Item</h3>
+              <h3 className="text-xl font-semibold mb-4 text-primary">
+                Edit Order Item
+              </h3>
               <div className="space-y-4">
                 <div>
                   <label className="block mb-1 text-sm font-medium">Quantity</label>

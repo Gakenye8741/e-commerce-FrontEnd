@@ -19,7 +19,9 @@ import SubcategoriesPage from './pages/CategoryPages/SubCategoryPages';
 import SubcategoriesProducts from './pages/CategoryPages/SubcategoryProducts';
 import Cart from './pages/CartPage';
 import Shop from './pages/Shop';
-import ManageOrders from './Dashboards/AdminDashboard/ManageOrders';
+import ManageOrders from './Dashboards/AdminDashboard/ManageOrdersItems';
+import ManageOrderss from './Dashboards/AdminDashboard/manageOders';
+
 
 function App() {
   
@@ -77,7 +79,8 @@ function App() {
         { path: 'ManageSubCategories', element: <ManageSubcategories/> },
         { path: 'ManageProducts', element: <ManageProducts/> },
         { path: 'ManageImages', element: <ManageMedia /> },
-        { path: 'ManageOrders', element: <ManageOrders /> }
+        { path: 'ManageOrderItems', element: <ManageOrders /> },
+        { path: 'ManageOrders', element: <ManageOrderss /> }
       ],
     },
   ])
