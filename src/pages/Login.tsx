@@ -33,7 +33,7 @@ const Login = () => {
       if(res.role === "admin"){
         setTimeout(() => navigate('/Admindashboard/ManageCategories'), 1000); 
       }else{
-         setTimeout(() => navigate('/dashboard'), 1000); 
+         setTimeout(() => navigate('/UserDashboard'), 1000); 
       }
       
     } catch (err: any) {

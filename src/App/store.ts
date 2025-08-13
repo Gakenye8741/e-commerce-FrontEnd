@@ -10,6 +10,7 @@ import { mediaApi } from "../Features/Apis/MediaApi";
 import { ordersApi } from "../Features/Apis/ordersApi";
 import { reviewApi } from "../Features/Apis/ReviewApi";
 import { orderItemsApi } from "../Features/Apis/OrderItemApis";
+import { mpesaApi } from "../Features/Apis/MpesaApi";
 
 
 // Create Persist Configuration for auth Slice
@@ -33,13 +34,14 @@ export const store = configureStore({
         [ordersApi.reducerPath]: ordersApi.reducer,
         [reviewApi.reducerPath]: reviewApi.reducer,
         [orderItemsApi.reducerPath]: orderItemsApi.reducer,
+        [mpesaApi.reducerPath]: mpesaApi.reducer,
         auth: persistedAuthReducer,
 
     },
     middleware: (getDefaultMiddleware)=>
         getDefaultMiddleware({
             serializableCheck: false
-        }).concat(userApi.middleware,categoryApi.middleware,subcategoryApi.middleware,productApi.middleware,mediaApi.middleware,ordersApi.middleware,reviewApi.middleware,orderItemsApi.middleware)
+        }).concat(userApi.middleware,categoryApi.middleware,subcategoryApi.middleware,productApi.middleware,mediaApi.middleware,ordersApi.middleware,reviewApi.middleware,orderItemsApi.middleware,mpesaApi.middleware)
 })
 
 export const persister = persistStore(store);

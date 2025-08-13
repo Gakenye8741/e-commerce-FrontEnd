@@ -21,6 +21,7 @@ import Cart from './pages/CartPage';
 import Shop from './pages/Shop';
 import ManageOrders from './Dashboards/AdminDashboard/ManageOrdersItems';
 import ManageOrderss from './Dashboards/AdminDashboard/manageOders';
+import { UserDashboard } from './pages/userDahboard';
 
 
 function App() {
@@ -65,6 +66,14 @@ function App() {
     {
        path:"/cart",
        element: <Cart/>
+    },
+    {
+      path: "/UserDashboard",
+      element: (
+        <ProtectedRoutes>
+          <UserDashboard/>
+        </ProtectedRoutes>
+      )
     },
     {
       path: 'admindashboard',

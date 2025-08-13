@@ -27,6 +27,7 @@ import {
   useCreateOrderMutation,
   useDeleteOrderMutation,
 } from "../Features/Apis/ordersApi";
+import { useInitiateSTKPushMutation } from "../Features/Apis/MpesaApi";
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -37,6 +38,7 @@ export default function CartPage() {
   const [createOrder] = useCreateOrderMutation();
   const [createOrderItem] = useCreateOrderItemMutation();
   const [deleteOrder] = useDeleteOrderMutation();
+  const [initiateSTKPush] = useInitiateSTKPushMutation();
 
   useEffect(() => {
     setCartItems(getCart());
@@ -104,7 +106,7 @@ export default function CartPage() {
 
       await Swal.fire({
         title: "Success!",
-        text: "✅ Your order was placed successfully.",
+        text: `✅ Order #${newOrderId} placed successfully.`,
         icon: "success",
         confirmButtonColor: "#2563eb",
       });
@@ -162,6 +164,99 @@ export default function CartPage() {
         confirmButtonColor: "#d33"
       });
     }
+  };
+
+ const handleInitiateMpesaPayment = async () => {
+  if (!orderId || total <= 0) return;
+
+  let formattedPhone = "";
+
+  const { value: inputPhone } = await Swal.fire({
+    title: "Enter Phone Number to Pay",
+    html: `
+      <p style="text-align:left">📦 <strong>Order ID:</strong> ${orderId}</p>
+      <p style="text-align:left">💵 <strong>Amount:</strong> Ksh ${total.toFixed(2)}</p>
+      <p style="margin-top:10px;">Enter a valid Safaricom number:</p>
+    `,
+    input: "text",
+    inputLabel: "Safaricom Number",
+    inputPlaceholder: "e.g. 2547XXXXXXXX, 07XXXXXXXX, 01XXXXXXXX",
+    inputAttributes: {
+      maxlength: "13",
+      autocapitalize: "off",
+      autocorrect: "off",
+    },
+    confirmButtonText: "Pay Now",
+    showCancelButton: true,
+    inputValidator: (value) => {
+      try {
+        formattedPhone = formatPhoneNumber(value);
+        return null;
+      } catch (err: any) {
+        return err.message;
+      }
+    },
+  });
+
+  if (inputPhone) {
+    try {
+      const confirmation = await Swal.fire({
+        title: "Confirm Payment",
+        html: `
+          <p>📞 <strong>Phone:</strong> ${formattedPhone}</p>
+          <p>📦 <strong>Order ID:</strong> ${orderId}</p>
+          <p>💵 <strong>Amount:</strong> Ksh ${total.toFixed(2)}</p>
+        `,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Confirm & Pay",
+        cancelButtonText: "Cancel",
+      });
+
+      if (!confirmation.isConfirmed) return;
+
+      const res = await initiateSTKPush({
+        orderId,
+        phoneNumber: formattedPhone,
+        amount: total,
+      }).unwrap();
+
+      if (res?.ResponseCode === "0") {
+        Swal.fire({
+          icon: "info",
+          title: "Check your phone 📲",
+          text: res?.ResponseDescription || "STK Push sent successfully.",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "STK Push Failed",
+          text: res?.ResponseDescription || "Payment request was rejected.",
+        });
+      }
+    } catch (error: any) {
+      console.error("❌ STK Push Error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "STK Push Failed",
+        text:
+          error?.data?.details ||
+          error?.data?.error ||
+          "An error occurred. Please try again.",
+      });
+    }
+  }
+};
+
+
+  const formatPhoneNumber = (input: string): string => {
+    const phone = input.trim().replace(/^\+/, "");
+
+    if (/^254\d{9}$/.test(phone)) return phone;
+    if (/^07\d{8}$/.test(phone)) return `254${phone.slice(1)}`;
+    if (/^01\d{8}$/.test(phone)) return `254${phone.slice(1)}`;
+
+    throw new Error("📵 Invalid Safaricom number format");
   };
 
   return (
@@ -244,9 +339,10 @@ export default function CartPage() {
               {orderId ? (
                 <>
                   <button
+                    onClick={handleInitiateMpesaPayment}
                     className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
                   >
-                    Checkout Now
+                    Pay with M-Pesa
                   </button>
                   <button
                     onClick={handleDeleteOrder}
