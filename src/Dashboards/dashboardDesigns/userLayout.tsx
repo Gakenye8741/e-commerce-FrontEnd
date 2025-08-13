@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
 import { Menu } from "lucide-react";
-import { AdminSideNav } from "./AdminSIdeNav";
+import { UserSideNav } from "./UserSdeNav";
 
 
 export const UserLayout = () => {
@@ -21,7 +21,7 @@ export const UserLayout = () => {
 
       {/* Desktop Sidebar */}
       <aside className="hidden md:block w-64 h-full fixed top-0 left-0 z-30 bg-base-200 border-r border-blue-500 shadow-xl">
-        <AdminSideNav onNavItemClick={() => {}} />
+        <UserSideNav onNavItemClick={() => {}} />
       </aside>
 
       {/* Mobile Sidebar + Overlay */}
@@ -35,7 +35,7 @@ export const UserLayout = () => {
 
           {/* Mobile Sidebar */}
           <aside className="fixed top-0 left-0 z-50 w-64 h-full bg-base-200 text-base-content border-r border-blue-500 shadow-xl md:hidden">
-            <AdminSideNav onNavItemClick={() => setSidebarOpen(false)} />
+            <UserSideNav onNavItemClick={() => setSidebarOpen(false)} />
           </aside>
         </>
       )}

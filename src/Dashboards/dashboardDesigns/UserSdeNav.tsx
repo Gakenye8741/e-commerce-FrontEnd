@@ -1,9 +1,8 @@
 import { NavLink } from "react-router-dom";
-import { TrendingUp, LogOut, ListOrdered } from "lucide-react";
+import { TrendingUp, LogOut} from "lucide-react";
 import { useDispatch } from "react-redux";
 import { clearCredentials } from "../../Features/Auth/AuthSlice";
-import { FaProductHunt } from "react-icons/fa";
-import { FaFirstOrder } from "react-icons/fa6";
+
 
 const navItems = [
   {
@@ -11,34 +10,10 @@ const navItems = [
     path: "ManageCategories",
     icon: <TrendingUp className="w-5 h-5" />,
   },
-  {
-    name: "Manage Sub-Categories",
-    path: "ManageSubCategories",
-    icon: <FaProductHunt className="w-5 h-5" />,
-  },
-  {
-    name: "Manage Products",
-    path: "ManageProducts",
-    icon: <FaProductHunt className="w-5 h-5" />,
-  },
-  {
-    name: "Manage Orders",
-    path: "ManageOrders",
-    icon: <ListOrdered className="w-5 h-5" />,
-  },
-   {
-    name: "Manage Ordered Items",
-    path: "ManageOrderItems",
-    icon: <FaFirstOrder className="w-5 h-5" />,
-  },
-  {
-    name: "Manage Images",
-    path: "ManageImages",
-    icon: <FaProductHunt className="w-5 h-5" />,
-  },
+ 
 ];
 
-export const AdminSideNav = ({ onNavItemClick }: { onNavItemClick?: () => void }) => {
+export const UserSideNav = ({ onNavItemClick }: { onNavItemClick?: () => void }) => {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
